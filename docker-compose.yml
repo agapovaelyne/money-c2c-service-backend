@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  money-app:
+    image: moneyc2c_money-app:latest
+    build: ./
+    ports:
+      - 5500:5500
+  money-frontend:
+    image: moneyc2c-frontend:latest
+    #environment:
+      #PORT: 3000
+      #PROXY_API: http://playground-web-backend:8080/
+    ports:
+      - 3000:3000

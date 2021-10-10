@@ -1,0 +1,8 @@
+#request to confirm operation and finish the transfer operation
+POST http://localhost:5500/confirmOperation
+Content-Type: application/json
+
+{
+  "code": "0000",
+  "operationId": "2"
+}
