@@ -61,13 +61,13 @@ public class MoneyC2CContainersTest {
     @Test
     void appResponse_test_operation_response_is_correct() {
         int applicationPort = appContainer.getMappedPort(APP_PORT);
-        HttpEntity<Operation> entity = new HttpEntity<>(operation);
-        System.out.println("BODY " + entity.getBody());
-        ResponseEntity<Operation> responseOne = restTemplate.postForEntity("http://localhost:" + applicationPort + "/transfer", entity, Operation.class);
-        ResponseEntity<Operation> responseTwo = restTemplate.postForEntity("http://localhost:" + applicationPort + "/transfer", entity, Operation.class);
-        String actualId = ((Operation) responseTwo.getBody()).getOperationId();
-        String expectedId = "2";
-        assertEquals(actualId, expectedId);
+        HttpEntity<Operation> entityOne = new HttpEntity<>(operation);
+        HttpEntity<Operation> entityTwo = new HttpEntity<>(testModels.getOperation());
+        ResponseEntity<Operation> responseOne = restTemplate.postForEntity("http://localhost:" + applicationPort + "/transfer", entityOne, Operation.class);
+        ResponseEntity<Operation> responseTwo = restTemplate.postForEntity("http://localhost:" + applicationPort + "/transfer", entityTwo, Operation.class);
+        String actualId = responseTwo.getBody().getOperationId();
+        int expectedId = Integer.parseInt(responseOne.getBody().getOperationId()) +1;
+        assertEquals(String.valueOf(expectedId), actualId);
     }
 
     //test errors
