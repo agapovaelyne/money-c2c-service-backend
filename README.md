@@ -38,12 +38,16 @@
 
 - **Реализованы интеграционные тесты с использованием testcontainers:**
 
-  Классы интеграционных реализованы в [src/test/java/com/transfer/MoneyC2C/container](src/test/java/com/transfer/MoneyC2C/container).
+  Класс интеграционных тестов - [src/test/java/com/transfer/MoneyC2C/container](src/test/java/com/transfer/MoneyC2C/container).
 
 ## Запуск:
 
 1. Убедитесь, что на машине установлен Docker,
-2. Подготовьте (соберите) образы для запуска backend'a и frontend'a, выполнив в терминале последовательно команды:
+2. Осуществите сборку проекта, выполнив команду в терминале:
+```
+mvn install
+```
+3. Подготовьте (соберите) образы для запуска backend'a и frontend'a, выполнив в терминале последовательно команды:
 ```
 docker build --file=frontend/Dockerfile  -t moneyc2c-frontend .
 
