@@ -19,9 +19,9 @@ public class LoggerTest {
     private final String logFile = "log/money-backend.log";
     private ReversedLinesFileReader reader;
 
-    TestModels testModels = new TestModels();
-    Operation operation = testModels.getOperation();
-    ConfirmationEntity confirmation = testModels.getConfirmationEntity();
+    private final TestModels testModels = new TestModels();
+    private final Operation operation = testModels.getOperation();
+    private final ConfirmationEntity confirmation = testModels.getConfirmationEntity();
 
     public LoggerTest() throws IOException {
     }

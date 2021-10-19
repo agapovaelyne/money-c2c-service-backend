@@ -1,5 +1,6 @@
 package com.transfer.MoneyC2C.service;
 
+import com.transfer.MoneyC2C.dto.MoneyTransferResponseDTO;
 import com.transfer.MoneyC2C.exception.InvalidData;
 import com.transfer.MoneyC2C.exception.TransferError;
 import com.transfer.MoneyC2C.model.ConfirmationEntity;
@@ -7,6 +8,8 @@ import com.transfer.MoneyC2C.model.Operation;
 import com.transfer.MoneyC2C.model.TestModels;
 import com.transfer.MoneyC2C.repository.TransferRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static java.util.Optional.of;
 import static org.junit.Assert.assertEquals;
@@ -15,28 +18,29 @@ import static org.mockito.Mockito.*;
 
 public class TransferServiceTest {
 
-    TestModels testModels = new TestModels();
-    Operation operation = testModels.getOperation();
-    ConfirmationEntity confirmation = testModels.getConfirmationEntity();
+    private final TestModels testModels = new TestModels();
+    private final Operation operation = testModels.getOperation();
+    private final ConfirmationEntity confirmation = testModels.getConfirmationEntity();
 
     @Test
     public void transferMoney_test_repository_mocked() {
-        String result = "Repository result";
-        String expected = String.format("{\"operationId\" : \"%s\"}", result);
+        String resultText = "Repository result";
+        MoneyTransferResponseDTO result = new MoneyTransferResponseDTO(resultText);
+        ResponseEntity<MoneyTransferResponseDTO> expected = new ResponseEntity<>(result, HttpStatus.OK);
         TransferRepository repositoryMock = mock(TransferRepository.class);
         TransferService service = new TransferService(repositoryMock);
-        when(repositoryMock.transferMoney(operation)).thenReturn(of(result));
-        String actual = service.transferMoney(operation);
-        assertEquals(expected, actual);
+        when(repositoryMock.transferMoney(operation)).thenReturn(of(resultText));
+        MoneyTransferResponseDTO actual = service.transferMoney(operation);
+        assertEquals(expected.getBody().getOperationId(), actual.getOperationId());
     }
 
     @Test
     public void transferMoney_test_nothing_mocked_valid_request() {
         TransferRepository repository = new TransferRepository();
         TransferService service = new TransferService(repository);
-        String actual = service.transferMoney(operation);
-        String expected = String.format("{\"operationId\" : \"%s\"}", operation.getOperationId());
-        assertEquals(expected, actual);
+        MoneyTransferResponseDTO actual = service.transferMoney(operation);
+        ResponseEntity<MoneyTransferResponseDTO> expected = new ResponseEntity<>(new MoneyTransferResponseDTO(operation.getOperationId()),HttpStatus.OK);
+        assertEquals(expected.getBody().getOperationId(), actual.getOperationId());
     }
 
     @Test
@@ -163,13 +167,14 @@ public class TransferServiceTest {
 
     @Test
     public void confirmOperation_test_repository_mocked() {
-        String result = "Repository result";
-        String expected = String.format("{\"operationId\" : \"%s\"}", result);
+        String resultText = "Repository result";
+        MoneyTransferResponseDTO result = new MoneyTransferResponseDTO(resultText);
+        ResponseEntity<MoneyTransferResponseDTO> expected = new ResponseEntity<>(result, HttpStatus.OK);
         TransferRepository repositoryMock = mock(TransferRepository.class);
         TransferService service = new TransferService(repositoryMock);
-        when(repositoryMock.confirmOperation(confirmation.getOperationId(), confirmation.getCode())).thenReturn(of(result));
-        String actual = service.confirmOperation(confirmation);
-        assertEquals(expected, actual);
+        when(repositoryMock.confirmOperation(confirmation.getOperationId(), confirmation.getCode())).thenReturn(of(resultText));
+        MoneyTransferResponseDTO actual = service.confirmOperation(confirmation);
+        assertEquals(expected.getBody().getOperationId(), actual.getOperationId());
     }
 
     @Test
@@ -177,7 +182,7 @@ public class TransferServiceTest {
         TransferRepository repositoryMock = mock(TransferRepository.class);
         TransferService service = new TransferService(repositoryMock);
 
-        String expected = String.format("Can't transfer money for operation %s", confirmation.getOperationId());
+        String expected = String.format("Can't transfer money for operation with id %s", confirmation.getOperationId());
 
         TransferError result = assertThrows(TransferError.class,
                 () -> service.confirmOperation(confirmation)

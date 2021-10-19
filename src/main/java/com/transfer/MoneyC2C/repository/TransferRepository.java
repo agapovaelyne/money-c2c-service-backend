@@ -12,17 +12,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class TransferRepository {
 
-    ConfirmationCodeSystemStub confirmationSystem = new ConfirmationCodeSystemStub();
+    private final ConfirmationCodeSystemStub confirmationSystem = new ConfirmationCodeSystemStub();
 
     private Map<String, Card> cardBaseStub = new ConcurrentHashMap<>();
     private Map<String, Operation> operationBaseStub = new ConcurrentHashMap<>();
 
     //stub card parameters for testing without db
-    private String cardFromStubNumber = "1111222233334444";
-    private int cardStubBalance = 1000000;
-    private String cardStubCVV = "555";
-    private String cardStubExpires = "05/25";
-    private String cardStubCurrency = "RUR";
+    private final String cardFromStubNumber = "1111222233334444";
+    private final int cardStubBalance = 1000000;
+    private final String cardStubCVV = "555";
+    private final String cardStubExpires = "05/25";
+    private final String cardStubCurrency = "RUR";
     private final Card stubCard = new Card(cardFromStubNumber, cardStubBalance, cardStubCVV, cardStubExpires);
 
     public TransferRepository() {
@@ -34,8 +34,6 @@ public class TransferRepository {
     public Optional<String> transferMoney(Operation operation) {
         Card cardFrom = cardBaseStub.get(operation.getCardFromNumber());
         if (cardFrom == null) {
-            //cardBaseStub.put(operation.getCardFromNumber(), (new Card(operation.getCardToNumber(), cardStubBalance)));
-            //or if we want to make operation only for cardFrom that is already in base (means exists):
             return Optional.empty();
         }
 
@@ -72,23 +70,9 @@ public class TransferRepository {
             return Optional.empty();
         }
 
-//        System.out.println(String.format(
-//                "card %s\nbalance %d\n" +
-//                        "card %s\nbalance %d\n"
-//                , operation.getCardFromNumber(), cardBaseStub.get(operation.getCardFromNumber()).getBalance(),
-//                operation.getCardToNumber(), cardBaseStub.get(operation.getCardToNumber()).getBalance()));
-
         cardBaseStub.get(operation.getCardFromNumber()).changeBalance((operation.getAmount().getValue() + (int) (operation.getAmount().getValue() * Operation.COMMISSION_RATE)) * (-1));
         cardBaseStub.get(operation.getCardToNumber()).changeBalance(operation.getAmount().getValue());
 
-//        System.out.println(String.format(
-//                "transfer money from card %s\nto card %s \n", operation.getCardFromNumber(), operation.getCardToNumber()));
-//
-//        System.out.println(String.format(
-//                "card %s\nbalance %d\n" +
-//                        "card %s\nbalance %d\n"
-//                , operation.getCardFromNumber(), cardBaseStub.get(operation.getCardFromNumber()).getBalance(),
-//                operation.getCardToNumber(), cardBaseStub.get(operation.getCardToNumber()).getBalance()));
         return Optional.of(operationId);
     }
 

@@ -1,5 +1,7 @@
 package com.transfer.MoneyC2C.controller;
 
+import com.transfer.MoneyC2C.dto.MoneyTransferExceptionDTO;
+import com.transfer.MoneyC2C.dto.MoneyTransferResponseDTO;
 import com.transfer.MoneyC2C.exception.InvalidData;
 import com.transfer.MoneyC2C.exception.TransferError;
 import com.transfer.MoneyC2C.model.ConfirmationEntity;
@@ -16,12 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-//@CrossOrigin(origins = "https://serp-ya.github.io,http://localhost:3000")
 @CrossOrigin(origins = "*")
 @RequestMapping()
 @Validated
 public class TransferController {
-    TransferService service;
+    private final TransferService service;
     private final Logger logger = Logger.getLogger(TransferController.class);
 
     public TransferController(TransferService service) {
@@ -29,40 +30,29 @@ public class TransferController {
     }
 
     @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String transferMoney(@Valid @RequestBody Operation operation) {
-        return service.transferMoney(operation);
+    public ResponseEntity<MoneyTransferResponseDTO> transferMoney(@Valid @RequestBody Operation operation) {
+        return new ResponseEntity<>(service.transferMoney(operation),HttpStatus.OK);
     }
 
     @PostMapping(value = "/confirmOperation", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String confirmOperation(@Valid @RequestBody ConfirmationEntity confirmation) {
-        return service.confirmOperation(confirmation);
+    public ResponseEntity<MoneyTransferResponseDTO> confirmOperation(@Valid @RequestBody ConfirmationEntity confirmation) {
+        return new ResponseEntity<>(service.confirmOperation(confirmation),HttpStatus.OK);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<String> handleRunTimeExc(MethodArgumentNotValidException exc) {
-        logger.error(exc.getLocalizedMessage());
+    ResponseEntity<MoneyTransferExceptionDTO> handleRunTimeExc(MethodArgumentNotValidException exc) {
         return handleRunTimeExc(new InvalidData(exc.getLocalizedMessage()));
     }
 
     @ExceptionHandler(InvalidData.class)
-    ResponseEntity<String> handleRunTimeExc(InvalidData exc) {
-        String responseText = String.format(
-                "{\"message\" : \"Error input data: %s\"," +
-                        "\"id\" : %d}",
-                exc.getLocalizedMessage(), exc.getId()
-        );
-        logger.error("Error " + responseText);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(responseText);
+    ResponseEntity<MoneyTransferExceptionDTO> handleRunTimeExc(InvalidData exc) {
+        logger.error("Error " + exc.toString());
+        return new ResponseEntity<>(new MoneyTransferExceptionDTO(exc), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TransferError.class)
-    ResponseEntity<String> handleRunTimeExc(TransferError exc) {
-        String responseText = String.format(
-                "{\"message\" : \"Error input data: %s\"," +
-                        "\"id\" : %d}",
-                exc.getLocalizedMessage(), exc.getId()
-        );
-        logger.error("Error " + responseText);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(responseText);
+    ResponseEntity<MoneyTransferExceptionDTO> handleRunTimeExc(TransferError exc) {
+        logger.error("Error " + exc.toString());
+        return new ResponseEntity<>(new MoneyTransferExceptionDTO(exc), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

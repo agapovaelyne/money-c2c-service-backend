@@ -13,9 +13,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class TransferRepositoryTest {
-    TestModels testModels = new TestModels();
-    Operation operation = testModels.getOperation();
-    ConfirmationEntity confirmation = testModels.getConfirmationEntity();
+    private final TestModels testModels = new TestModels();
+    private final Operation operation = testModels.getOperation();
+    private final ConfirmationEntity confirmation = testModels.getConfirmationEntity();
 
     @Test
     public void transferMoney_test() {

@@ -12,4 +12,12 @@ public class MoneyTransferException extends RuntimeException {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return  this.getClass().getSimpleName() + " {" +
+                "message='" + this.getLocalizedMessage() + '\'' +
+                ", id=" + this.getId() +
+                '}';
+    }
 }

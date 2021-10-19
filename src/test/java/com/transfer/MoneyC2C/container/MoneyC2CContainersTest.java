@@ -21,15 +21,15 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class MoneyC2CContainersTest {
     @Autowired
-    TestRestTemplate restTemplate;
-    public static final int APP_PORT = 5500;
+    private TestRestTemplate restTemplate;
+    private static final int APP_PORT = 5500;
 
     @Container
-    private GenericContainer<?> appContainer = new GenericContainer<>("moneyc2c_money-app")
+    private final GenericContainer<?> appContainer = new GenericContainer<>("moneyc2c_money-app")
             .withExposedPorts(APP_PORT);
 
-    TestModels testModels = new TestModels();
-    Operation operation = testModels.getOperation();
+    private final TestModels testModels = new TestModels();
+    private final Operation operation = testModels.getOperation();
 
     @Test
     void appResponse_test_operation_status() {

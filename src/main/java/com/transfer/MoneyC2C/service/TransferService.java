@@ -1,5 +1,6 @@
 package com.transfer.MoneyC2C.service;
 
+import com.transfer.MoneyC2C.dto.MoneyTransferResponseDTO;
 import com.transfer.MoneyC2C.exception.InvalidData;
 import com.transfer.MoneyC2C.exception.TransferError;
 import com.transfer.MoneyC2C.model.Card;
@@ -12,14 +13,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransferService {
 
-    TransferRepository repository;
+    private final TransferRepository repository;
     private final Logger logger = Logger.getLogger(TransferService.class);
 
     public TransferService(TransferRepository repository) {
         this.repository = repository;
     }
 
-    public String transferMoney(Operation operation) {
+    public MoneyTransferResponseDTO transferMoney(Operation operation) {
         try {
             if (operation.getCardToNumber().equals(operation.getCardFromNumber())) {
                 throw new InvalidData(String.format("Can't transfer money to the same card: %s -> %s", operation.getCardFromNumber(), operation.getCardToNumber()));
@@ -31,20 +32,20 @@ public class TransferService {
 
             String operationId = repository.transferMoney(operation).orElseThrow(() -> new TransferError("Can't transfer money from card " + operation.getCardFromNumber()));
             logger.info("Operation " + operation);
-            return String.format("{\"operationId\" : \"%s\"}", operationId);
+            return new MoneyTransferResponseDTO(operationId);
         } catch (NullPointerException ex) {
             throw new InvalidData(ex.getLocalizedMessage());
         }
     }
 
-    public String confirmOperation(ConfirmationEntity confirmation) {
+    public MoneyTransferResponseDTO confirmOperation(ConfirmationEntity confirmation) {
         try {
             String operationId = confirmation.getOperationId();
             String code = confirmation.getCode();
 
-            String operationResult = repository.confirmOperation(operationId, code).orElseThrow(() -> new TransferError(String.format("Can't transfer money for operation %s", operationId)));
+            String operationResult = repository.confirmOperation(operationId, code).orElseThrow(() -> new TransferError(String.format("Can't transfer money for operation with id %s", operationId)));
             logger.info(String.format("Operation confirmed {operationId=%s}", operationResult));
-            return String.format("{\"operationId\" : \"%s\"}", operationResult);
+            return new MoneyTransferResponseDTO(operationResult);
         } catch (NullPointerException ex) {
             throw new InvalidData(ex.getLocalizedMessage());
         }

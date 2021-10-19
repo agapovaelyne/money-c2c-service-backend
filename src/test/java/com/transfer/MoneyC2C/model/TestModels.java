@@ -3,32 +3,32 @@ import java.util.Random;
 
 public class TestModels {
 
-    private String cardFromStubNumber = "1111222233334444";
-    private String cardFromInvalidStubNumber = "111dsd1222233334444";
+    private final String cardFromStubNumber = "1111222233334444";
+    private final String cardFromInvalidStubNumber = "111dsd1222233334444";
 
-    private int cardStubBalance = 1000000;
+    private final int cardStubBalance = 1000000;
 
-    private String cardStubCVV = "555";
-    private String invalidCardStubCVV = "5555";
-    private String incorrectCardStubCVV = "345";
+    private final String cardStubCVV = "555";
+    private final String invalidCardStubCVV = "5555";
+    private final String incorrectCardStubCVV = "345";
 
-    private String cardStubExpires = "05/25";
-    private String cardStubIsExpired = "08/21";
-    private String cardStubIncorrectExpires = "07/25";
-    private String cardStubCurrency = "RUR";
+    private final String cardStubExpires = "05/25";
+    private final String cardStubIsExpired = "08/21";
+    private final String cardStubIncorrectExpires = "07/25";
+    private final String cardStubCurrency = "RUR";
 
-    private String cardToStubNumber = "1111111111111111";
+    private final String cardToStubNumber = "1111111111111111";
 
-    private String operationIdStub = "1";
-    private String operationInvalidIdStub = "invalid";
+    private final String operationIdStub = "1";
+    private final String operationInvalidIdStub = "invalid";
 
-    private String confirmationCodeStub = ConfirmationCodeSystemStub.CONFIRMATION_CODE_STUB;
-    private String confirmationInvalidCodeStub = "invalid";
+    private final String confirmationCodeStub = ConfirmationCodeSystemStub.CONFIRMATION_CODE_STUB;
+    private final String confirmationInvalidCodeStub = "invalid";
 
     private Random rand = new Random();
 
     private int cardStubAmountValue = rand.nextInt(cardStubBalance) + 1;
-    private Amount amount = new Amount(cardStubAmountValue, cardStubCurrency);
+    private final Amount amount = new Amount(cardStubAmountValue, cardStubCurrency);
 
     public Operation getOperation() {
         return new Operation(cardFromStubNumber, cardStubCVV, cardStubExpires, cardToStubNumber, amount);
